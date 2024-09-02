@@ -1,72 +1,62 @@
 <template>
-  <h1 :style="{color: count > 5 ? 'red' : 'green'}">Count : {{count}}</h1>
-  <!-- Hide or show something with a condition -->
-  <!-- <div v-show="count >= 10">Count is greater than or equal to 10</div> --> 
-  <!-- <div v-if="count >= 5">Count is greater than or equal to 5</div>
-  <div v-else>Count is less than 5</div> -->
+  <h1>Todo List</h1>
 
-  <!-- Use button and functions on click -->
-  <!-- <button @click="count++">Increment</button> -->
-  <!-- <button @click="count--">Decrement</button> -->
-  <button v-on:click="increment">Increment</button>
-  <button v-on:click="decrement">Decrement</button>
-
-    <form action="" @submit.prevent="addMovie">
-      <input type="text" v-model="newMovie">
-      <button >Add Movie</button>
-    </form>
-
-
-    <!-- Example of loop -->
+  <form action="" @submit.prevent="addTodo">
+    <fieldset role="group">
+      <input v-model="newTodo" type="text" placeholder="Tasks to do" />
+      <button :disabled="newTodo.length == 0">Add</button>
+    </fieldset>
+  </form>
+  
+  <div v-if="todos.length == 0"> You have no tasks </div>
+  <div v-else>
     <ul>
-      <li v-for="movie in movies">
-        {{movie}} <button @click="deleteMovie(movie)">Delete</button>
-        <button @click.prevent="modifyMovie(movie)">Modify</button>
+      <li v-for="todo in sortedTodos()" :key="todo.date" :class="{done : todo.done}">
+        <label>
+          <input type="checkbox" v-model="todo.done" />
+          {{ todo.title }}
+        </label>
       </li>
     </ul>
-
+    <label>
+      <input type="checkbox" v-model="hideDone"> Hide Done Tasks 
+    </label>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 
+const todos = ref([])
 
-const newMovie = ref('')
-const movies = ref(['The Matrix', 'The Matrix Reloaded', 'The Matrix Revolutions'])
-const count = ref(0)
+const newTodo = ref('')
 
-const increment = () => {
-  count.value++
+const addTodo = () => {
+  todos.value.push({
+    title: newTodo.value,
+    done: false,
+    date: Date.now()
+  })
+  newTodo.value = ''
 }
 
-const decrement = () => {
-  count.value--
+const sortedTodos = () => {
+  const sortedTodos = todos.value.toSorted((a, b) => a.done > b.done ? 1 : -1)
+  if (hideDone.value) {
+    return sortedTodos.filter(todo => !todo.done)
+  }
+  else {
+    return sortedTodos
+  }
 }
 
-// const addMovie = (event) => {
-//   event.preventDefault()
-//   movies.value.push(newMovie.value)
-//   newMovie.value = ''
-// }
-
-const addMovie = () => {
-  movies.value.push(newMovie.value)
-  newMovie.value = ''
-}
-
-const deleteMovie = (movie) => {
-  movies.value = movies.value.filter(m => m !== movie)
-}
-
-const modifyMovie = (movie) => {
-  const newTitle = prompt('Enter new title')
-  movies.value = movies.value.map(m => m === movie ? newTitle : m)
-}
-
+const hideDone = ref(false)
+  
 </script>
 
 <style>
-  h1 {
-    color: blue;
+  .done {
+    opacity: .5;
+    text-decoration: line-through;
   }
 </style>
