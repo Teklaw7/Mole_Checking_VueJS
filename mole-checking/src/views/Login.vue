@@ -7,11 +7,7 @@
         <input v-model="passwordInput" type="password" id="password" name="password">
         <button :disabled="!userInput.includes('@gmail.com') || !passwordInput" @click="clearValues">Login</button>
         <div v-if="!userInput.includes('@gmail.com')">Username has to include @gmail.com</div>
-
-
     </form>
-
-
 </template>
 
 <script setup>

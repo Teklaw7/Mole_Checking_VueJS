@@ -5,6 +5,9 @@ import Home from './views/Home.vue'
 import Pictures from './views/Pictures.vue'
 import Contact from './views/Contact.vue'
 import Login from './views/Login.vue'
+// import VueGoogleMaps from '@fawmi/vue-google-maps';
+
+
 
 const routes = [
     {path: '/', component: Home},
